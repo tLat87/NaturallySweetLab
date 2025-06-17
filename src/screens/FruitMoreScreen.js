@@ -125,6 +125,7 @@ const styles = StyleSheet.create({
     },
     shareButton: {
         backgroundColor: '#00C853',
+        alignItems: 'center',
         paddingVertical: 12,
         marginTop: 20,
         paddingHorizontal: 24,
