@@ -1,69 +1,53 @@
 workflows:
-  react-native-ios:
-    name: React Native iOS
+  sample-workflow:
+    name: Naturally Sweet Lab
     max_build_duration: 120
-    instance_type: mac_mini_m2
+    instance_type: mac_mini_m1
+    integrations:
+      app_store_connect: NaturallySweetLab
     environment:
-      groups:
-        - creds
+      ios_signing:
+        distribution_type: app_store
+        bundle_identifier: com.naturallysweetlab.my
       vars:
-        XCODE_WORKSPACE: "NaturallySweetLab.xcworkspace" # <----
-        XCODE_SCHEME: "NaturallySweetLab" # <----
-        BUNDLE_ID: "com.naturallysweetlab.my" # <----
-        APP_STORE_APP_ID: 6747883238 # <----
-        APP_STORE_CONNECT_KEY_ID: "3S87SUUXFJ" # <----
-        APP_STORE_CONNECT_ISSUER_ID: "1e2dd8a1-d2d2-41fa-adbe-90c1814d3ed1" # <----
-        node: latest
-        xcode: latest
-        cocoapods: default
-    triggering:
-      events:
-        - push
-        - tag
-        - pull_request
-      branch_patterns:
-        - pattern: develop
-          include: true
-          source: true
+        APP_STORE_APPLE_ID: 6747883238
+        BUNDLE_ID: "com.naturallysweetlab.my"
+        XCODE_WORKSPACE: "NaturallySweetLab.xcworkspace"
+        XCODE_SCHEME: "NaturallySweetLab"
     scripts:
-      - name: Install npm dependencies
-        script: npm install --force
+      - name: Install node modules
+        script: |
+          npm install
       - name: Install CocoaPods dependencies
-        script: cd ios && pod install
-      - name: Set up keychain for code signing
-        script: keychain initialize
-      - name: Fetch signing files
-        script: app-store-connect fetch-signing-files "$BUNDLE_ID" --type IOS_APP_STORE --create
-      - name: Use system default keychain
-        script: keychain add-certificates
+        script: |
+          cd ios && pod install
+      - name: Set up provisioning profile settings on  Xcode project
+        script: |
+          cd ios
+          xcode-project use-profiles
       - name: Increment build number
         script: |
+          #!/bin/sh
           cd $CM_BUILD_DIR/ios
-          agvtool new-version -all $(($(app-store-connect get-latest-testflight-build-number "$APP_STORE_APP_ID") + 1))
-      - name: Set up code signing settings in Xcode project
-        script: xcode-project use-profiles --warn-only
-      - name: Build IPA for distribution
-        script: xcode-project build-ipa --workspace "$CM_BUILD_DIR/ios/$XCODE_WORKSPACE" --scheme "$XCODE_SCHEME" --archive-flags="-destination 'generic/platform=iOS'"
+          LATEST_BUILD_NUMBER=$(app-store-connect get-latest-app-store-build-number "$APP_STORE_APPLE_ID")
+          agvtool new-version -all $(($LATEST_BUILD_NUMBER + 1))
+      - name: Set Info.plist values
+        script: |
+          PLIST=$CM_BUILD_DIR/ios/AwesomeProject/Info.plist
+          PLIST_BUDDY=/usr/libexec/PlistBuddy
+          $PLIST_BUDDY -c "Add :ITSAppUsesNonExemptEncryption bool false" $PLIST
+      - name: Build ipa for distribution
+        script: |
+          xcode-project build-ipa \
+            --workspace "$CM_BUILD_DIR/ios/$XCODE_WORKSPACE" \
+            --scheme "$XCODE_SCHEME"
     artifacts:
       - build/ios/ipa/*.ipa
       - /tmp/xcodebuild_logs/*.log
       - $HOME/Library/Developer/Xcode/DerivedData/**/Build/**/*.app
       - $HOME/Library/Developer/Xcode/DerivedData/**/Build/**/*.dSYM
     publishing:
-      email:
-        recipients:
-          - bertamisiak@gmail.com       # <----
-        notify:
-          success: true
-          failure: false
-      slack:
-        channel: '#builds'
-        notify_on_build_start: true
-        notify:
-          success: true
-          failure: false
       app_store_connect:
-        api_key: "$APP_STORE_CONNECT_PRIVATE_KEY"
-        key_id: "$APP_STORE_CONNECT_KEY_ID"
-        issuer_id: "$APP_STORE_CONNECT_ISSUER_ID"
-        submit_to_testflight: true
+        auth: integration
+        submit_to_app_store: true
+        copyright: Naturally Sweet Lab 2025
