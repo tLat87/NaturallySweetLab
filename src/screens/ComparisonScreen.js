@@ -1,5 +1,5 @@
 import React, {useEffect} from 'react';
-import { View, Text, Image, StyleSheet, TouchableOpacity } from 'react-native';
+import {View, Text, Image, StyleSheet, TouchableOpacity, ScrollView} from 'react-native';
 import ShareLib from 'react-native-share';
 import {useDispatch, useSelector} from "react-redux";
 import {unlockAchievement} from "../redux/slices/achievementsSlice";
@@ -52,7 +52,7 @@ Stickiness: ${options.second.stickiness}
 
 
     return (
-        <View style={styles.container}>
+        <ScrollView style={styles.container}>
             <View style={{backgroundColor: '#FFC727', justifyContent: 'center', alignItems: 'center', padding: 30, borderRadius: 30, borderWidth: 2, borderColor: '#9B4FC7'}}>
                 <View style={styles.imageRow}>
                     <Image source={imageFruit} style={styles.image} />
@@ -91,7 +91,8 @@ Stickiness: ${options.second.stickiness}
             <TouchableOpacity style={styles.shareButton} onPress={handleShare}>
                 <Text style={styles.shareText}>Share</Text>
             </TouchableOpacity>
-        </View>
+            <View style={{marginBottom: 130}}/>
+        </ScrollView>
     );
 };
 
@@ -102,7 +103,7 @@ const styles = StyleSheet.create({
         flex: 1,
         backgroundColor: '#F053C4',
         paddingTop: 100,
-        alignItems: 'center',
+        // alignItems: 'center',
         padding: 16
     },
     imageRow: {
@@ -148,6 +149,7 @@ const styles = StyleSheet.create({
     shareButton: {
         backgroundColor: '#00C853',
         paddingVertical: 12,
+        alignItems: 'center',
         marginTop: 20,
         paddingHorizontal: 24,
         borderRadius: 8

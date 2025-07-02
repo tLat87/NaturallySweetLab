@@ -142,6 +142,7 @@ const FruitVsCandy = ({navigation}) => {
                     </TouchableOpacity>
                 )}
             />
+            <View style={{ marginBottom: 150 }} />
         </SafeAreaView>
     );
 };

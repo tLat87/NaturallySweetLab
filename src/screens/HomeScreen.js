@@ -115,7 +115,9 @@ const HomeScreen = ({navigation}) => {
                         </ImageBackground>
                     </TouchableOpacity>
                 )}
+                ListFooterComponent={<View style={{ marginBottom: 150 }} />}
             />
+
         </SafeAreaView>
     );
 };

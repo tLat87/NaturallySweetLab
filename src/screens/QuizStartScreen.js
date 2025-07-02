@@ -1,5 +1,5 @@
 import React from 'react';
-import {View, Text, StyleSheet, TouchableOpacity, Image} from 'react-native';
+import {View, Text, StyleSheet, TouchableOpacity, Image, ScrollView} from 'react-native';
 
 export default function QuizStartScreen({ navigation }) {
     const handleStart = () => {
@@ -7,7 +7,7 @@ export default function QuizStartScreen({ navigation }) {
     };
 
     return (
-        <View style={styles.container}>
+        <ScrollView style={styles.container}>
             <View style={styles.card}>
                 <Text style={styles.title}>Welcome to the Sweet Swap Quiz!</Text>
                 <Text style={styles.text}>
@@ -21,13 +21,14 @@ export default function QuizStartScreen({ navigation }) {
                 <Text style={styles.text}>{'\u2022'} Good match = 1 point</Text>
                 <Text style={styles.text}>{'\u2022'} Not suitable = 0 points</Text>
             </View>
-            <TouchableOpacity onPress={handleStart}>
+            <TouchableOpacity onPress={handleStart} styles={{}} >
                 <Image
                     source={require('../assets/img/ButtonText.png')}
                     resizeMode="contain"
                 />
             </TouchableOpacity>
-        </View>
+            <View style={{marginBottom: 130}}/>
+        </ScrollView>
     );
 }
 
@@ -35,8 +36,8 @@ const styles = StyleSheet.create({
     container: {
         flex: 1,
         backgroundColor: '#f012a9',
-        justifyContent: 'center',
-        alignItems: 'center',
+        // justifyContent: 'center',
+        // alignItems: 'center',
         padding: 20,
     },
     card: {

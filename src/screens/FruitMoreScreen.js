@@ -49,6 +49,7 @@ const FruitMoreScreen = ({ route }) => {
             <TouchableOpacity style={styles.shareButton} onPress={handleShare}>
                 <Text style={styles.shareText}>Share</Text>
             </TouchableOpacity>
+           <View style={{ marginBottom: 150 }} />
         </ScrollView>
     );
 };
